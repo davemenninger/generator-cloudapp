@@ -1,13 +1,17 @@
-'use strict';
-const Generator = require('yeoman-generator');
-const chalk = require('chalk');
-const yosay = require('yosay');
+"use strict";
+const Generator = require("yeoman-generator");
+const chalk = require("chalk");
+const yosay = require("yosay");
 
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
     this.log(
-      yosay(`Welcome to the tremendous ${chalk.red('generator-cloudapp')} generator!`)
+      yosay(
+        `Welcome to the tremendous ${chalk.red(
+          "generator-cloudapp"
+        )} generator!`
+      )
     );
 
     const prompts = [
@@ -15,7 +19,7 @@ module.exports = class extends Generator {
         type: "input",
         name: "name",
         message: "Your project name",
-        default: this.appname.replace(/\s+/g, '-'),  // Yeoman replaces dashes with spaces. We want dashes.
+        default: this.appname.replace(/\s+/g, "-"), // Yeoman replaces dashes with spaces. We want dashes.
         store: true
       },
       {
@@ -24,21 +28,20 @@ module.exports = class extends Generator {
         message: "Your github username ( or organization name )",
         default: "whapps",
         store: true
-
       },
       {
         type: "input",
         name: "githubRepository",
         message: "Your repository name",
-        default: this.appname.replace(/\s+/g, '-'),  // Yeoman replaces dashes with spaces. We want dashes.
+        default: this.appname.replace(/\s+/g, "-"), // Yeoman replaces dashes with spaces. We want dashes.
         store: true
       },
       {
-        type: 'confirm',
-        name: 'isPhoenix',
-        message: 'Would you like to generate a phoenix app?',
+        type: "confirm",
+        name: "isPhoenix",
+        message: "Would you like to generate a phoenix app?",
         default: true
-      },
+      }
     ];
 
     return this.prompt(prompts).then(props => {
@@ -49,43 +52,45 @@ module.exports = class extends Generator {
 
   makeTemplates() {
     this.fs.copyTpl(
-      this.templatePath('Makefile'),
-      this.destinationPath('Makefile'),
+      this.templatePath("Makefile"),
+      this.destinationPath("Makefile"),
       {
         appname: this.props.name,
-        pipelineStackname: this.props.name + '-pipeline',
-        clusterStackname: this.props.name + '-cluster',
-        whichMakeTest: (this.props.isPhoenix ? 'mix-test' : 'default-test')
+        pipelineStackname: this.props.name + "-pipeline",
+        clusterStackname: this.props.name + "-cluster",
+        whichMakeTest: this.props.isPhoenix ? "mix-test" : "default-test"
       }
     );
   }
 
   cloudTemplates() {
     this.fs.copyTpl(
-      this.templatePath('pipeline.yml'),
-      this.destinationPath('pipeline.yml'),
+      this.templatePath("pipeline.yml"),
+      this.destinationPath("pipeline.yml"),
       {
         appname: this.props.name,
         githubUser: this.props.githubUser,
-        githubRepository: this.props.githubRepository,
+        githubRepository: this.props.githubRepository
       }
     );
   }
 
   dockerTemplates() {
     this.fs.copyTpl(
-      this.templatePath('docker-compose.yml'),
-      this.destinationPath('docker-compose.yml'),
+      this.templatePath("docker-compose.yml"),
+      this.destinationPath("docker-compose.yml"),
       {
         appname: this.props.name
       }
     );
 
-    var dockerfile = ( this.props.isPhoenix ? 'Dockerfile.phoenix' : 'Dockerfile.default' );
-    this.props.phoenixAppname = this.props.name.replace(/-/g,'_');
+    var dockerfile = this.props.isPhoenix
+      ? "Dockerfile.phoenix"
+      : "Dockerfile.default";
+    this.props.phoenixAppname = this.props.name.replace(/-/g, "_");
     this.fs.copyTpl(
       this.templatePath(dockerfile),
-      this.destinationPath('Dockerfile'),
+      this.destinationPath("Dockerfile"),
       {
         appname: this.props.name,
         phoenixAppname: this.props.phoenixAppname
@@ -94,16 +99,24 @@ module.exports = class extends Generator {
   }
 
   phoenixGen() {
-    if ( this.props.isPhoenix )
-    {
-      console.log('now going to run mix phx.new for you...');
-      this.spawnCommandSync('mix', [ 'phx.new', '.', '--app', this.props.phoenixAppname ]);
-      console.log('TODO change the hostname in config/test.exs from `localhost` to `db`');
-      console.log('TODO comment out the prod.secret.exs import line in prod.exs and rm it and add releases');
+    if (this.props.isPhoenix) {
+      console.log("now going to run mix phx.new for you...");
+      this.spawnCommandSync("mix", [
+        "phx.new",
+        ".",
+        "--app",
+        this.props.phoenixAppname
+      ]);
+      console.log(
+        "TODO change the hostname in config/test.exs from `localhost` to `db`"
+      );
+      console.log(
+        "TODO comment out the prod.secret.exs import line in prod.exs and rm it and add releases"
+      );
     }
   }
 
-  _stuff(){
+  _stuff() {
     console.log("this ran");
   }
 
