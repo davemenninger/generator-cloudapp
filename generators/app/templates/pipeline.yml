@@ -168,6 +168,24 @@ Resources:
                 - Name: TestOutput
               RunOrder: 1
 
+        # And build the docker image and put it in our repo
+        - Name: Build
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+                PrimarySource: Source
+              InputArtifacts:
+                - Name: TestOutput
+                - Name: Source
+              OutputArtifacts:
+                - Name: BuildOutput
+              RunOrder: 1
 
   # This is the definition of how to build the code in the repository
   CodeTestProject:
@@ -201,3 +219,39 @@ Resources:
       Name: !Join ['-', [!Ref 'EnvironmentName', 'codebuild-test']]
       ServiceRole: !Ref CodeBuildServiceRole
 
+  # This is the definition of how to build the code in the repository
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - $(aws ecr get-login --no-include-email)
+                - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+                - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
+            build:
+              commands:
+                - docker build --tag "${IMAGE_URI}" . --target runtime
+            post_build:
+              commands:
+                - docker push "$IMAGE_URI"
+                - printf '{"ImageUri":"%s"}' "$IMAGE_URI" > build.json
+          artifacts:
+            files: build.json
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:17.09.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: AWS_DEFAULT_REGION
+            Value: !Ref AWS::Region
+          - Name: REPOSITORY_URI
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
+      Name: !Ref AWS::StackName
+      ServiceRole: !Ref CodeBuildServiceRole

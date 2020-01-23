@@ -15,19 +15,23 @@ module.exports = class extends Generator {
         type: "input",
         name: "name",
         message: "Your project name",
-        default: this.appname.replace(/\s+/g, '-')  // Yeoman replaces dashes with spaces. We want dashes.
+        default: this.appname.replace(/\s+/g, '-'),  // Yeoman replaces dashes with spaces. We want dashes.
+        store: true
       },
       {
         type: "input",
         name: "githubUser",
         message: "Your github username ( or organization name )",
-        default: "whapps"
+        default: "whapps",
+        store: true
+
       },
       {
         type: "input",
         name: "githubRepository",
         message: "Your repository name",
-        default: this.appname.replace(/\s+/g, '-')  // Yeoman replaces dashes with spaces. We want dashes.
+        default: this.appname.replace(/\s+/g, '-'),  // Yeoman replaces dashes with spaces. We want dashes.
+        store: true
       },
       {
         type: 'confirm',
@@ -50,6 +54,7 @@ module.exports = class extends Generator {
       {
         appname: this.props.name,
         pipelineStackname: this.props.name + '-pipeline',
+        clusterStackname: this.props.name + '-cluster',
         whichMakeTest: (this.props.isPhoenix ? 'mix-test' : 'default-test')
       }
     );
@@ -77,11 +82,13 @@ module.exports = class extends Generator {
     );
 
     var dockerfile = ( this.props.isPhoenix ? 'Dockerfile.phoenix' : 'Dockerfile.default' );
+    this.props.phoenixAppname = this.props.name.replace(/-/g,'_');
     this.fs.copyTpl(
       this.templatePath(dockerfile),
       this.destinationPath('Dockerfile'),
       {
-        appname: this.props.name
+        appname: this.props.name,
+        phoenixAppname: this.props.phoenixAppname
       }
     );
   }
@@ -90,8 +97,9 @@ module.exports = class extends Generator {
     if ( this.props.isPhoenix )
     {
       console.log('now going to run mix phx.new for you...');
-      this.spawnCommandSync('mix', [ 'phx.new', '.', '--app', this.props.name.replace(/-/g,'_') ]);
+      this.spawnCommandSync('mix', [ 'phx.new', '.', '--app', this.props.phoenixAppname ]);
       console.log('TODO change the hostname in config/test.exs from `localhost` to `db`');
+      console.log('TODO comment out the prod.secret.exs import line in prod.exs and rm it and add releases');
     }
   }
 
