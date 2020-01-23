@@ -111,16 +111,8 @@ module.exports = class extends Generator {
         "TODO change the hostname in config/test.exs from `localhost` to `db`"
       );
       console.log(
-        "TODO comment out the prod.secret.exs import line in prod.exs and rm it and add releases"
+        "TODO comment out the prod.secret.exs import line in prod.exs and rm it"
       );
     }
-  }
-
-  _stuff() {
-    console.log("this ran");
-  }
-
-  _install() {
-    this.installDependencies();
   }
 };
