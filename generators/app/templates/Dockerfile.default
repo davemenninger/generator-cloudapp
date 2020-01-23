@@ -1,0 +1,7 @@
+FROM ubuntu:bionic AS base
+
+FROM base AS test
+
+WORKDIR /app
+
+RUN echo "ok"

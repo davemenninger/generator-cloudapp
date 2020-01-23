@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Dave Menninger",
+      "authorEmail": "dave.menninger@gmail.com",
+      "authorUrl": ""
+    }
+  }
+}

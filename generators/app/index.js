@@ -1,0 +1,105 @@
+'use strict';
+const Generator = require('yeoman-generator');
+const chalk = require('chalk');
+const yosay = require('yosay');
+
+module.exports = class extends Generator {
+  prompting() {
+    // Have Yeoman greet the user.
+    this.log(
+      yosay(`Welcome to the tremendous ${chalk.red('generator-cloudapp')} generator!`)
+    );
+
+    const prompts = [
+      {
+        type: "input",
+        name: "name",
+        message: "Your project name",
+        default: this.appname.replace(/\s+/g, '-')  // Yeoman replaces dashes with spaces. We want dashes.
+      },
+      {
+        type: "input",
+        name: "githubUser",
+        message: "Your github username ( or organization name )",
+        default: "whapps"
+      },
+      {
+        type: "input",
+        name: "githubRepository",
+        message: "Your repository name",
+        default: this.appname.replace(/\s+/g, '-')  // Yeoman replaces dashes with spaces. We want dashes.
+      },
+      {
+        type: 'confirm',
+        name: 'isPhoenix',
+        message: 'Would you like to generate a phoenix app?',
+        default: true
+      },
+    ];
+
+    return this.prompt(prompts).then(props => {
+      // To access props later use this.props.someAnswer;
+      this.props = props;
+    });
+  }
+
+  makeTemplates() {
+    this.fs.copyTpl(
+      this.templatePath('Makefile'),
+      this.destinationPath('Makefile'),
+      {
+        appname: this.props.name,
+        pipelineStackname: this.props.name + '-pipeline',
+        whichMakeTest: (this.props.isPhoenix ? 'mix-test' : 'default-test')
+      }
+    );
+  }
+
+  cloudTemplates() {
+    this.fs.copyTpl(
+      this.templatePath('pipeline.yml'),
+      this.destinationPath('pipeline.yml'),
+      {
+        appname: this.props.name,
+        githubUser: this.props.githubUser,
+        githubRepository: this.props.githubRepository,
+      }
+    );
+  }
+
+  dockerTemplates() {
+    this.fs.copyTpl(
+      this.templatePath('docker-compose.yml'),
+      this.destinationPath('docker-compose.yml'),
+      {
+        appname: this.props.name
+      }
+    );
+
+    var dockerfile = ( this.props.isPhoenix ? 'Dockerfile.phoenix' : 'Dockerfile.default' );
+    this.fs.copyTpl(
+      this.templatePath(dockerfile),
+      this.destinationPath('Dockerfile'),
+      {
+        appname: this.props.name
+      }
+    );
+  }
+
+  phoenixGen() {
+    if ( this.props.isPhoenix )
+    {
+      console.log('now going to run mix phx.new for you...');
+      this.spawnCommandSync('mix', [ 'phx.new', '.', '--app', this.props.name.replace(/-/g,'_') ]);
+      console.log('TODO change the hostname in config/test.exs from `localhost` to `db`');
+    }
+  }
+
+  _stuff(){
+    console.log("this ran");
+  }
+
+  _install() {
+    this.installDependencies();
+  }
+};
