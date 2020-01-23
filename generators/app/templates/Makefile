@@ -1,5 +1,10 @@
+.PHONY: all greet list-stacks deploy-pipeline delete-pipeline \ 
+	deploy-cluster delete-cluster test default-test mix-test
+
+all: greet
+
 greet:
-	echo "hello, <%= appname %>"
+	@ echo "hello, <%= appname %>"
 
 list-stacks:
 	aws cloudformation list-stacks
