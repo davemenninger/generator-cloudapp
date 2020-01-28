@@ -64,7 +64,7 @@ module.exports = class extends Generator {
       this.destinationPath("Makefile.aws"),
       {
         pipelineStackname: this.props.name + "-pipeline",
-        clusterStackname: this.props.name + "-cluster",
+        clusterStackname: this.props.name + "-cluster"
       }
     );
   }
@@ -89,6 +89,13 @@ module.exports = class extends Generator {
         appname: this.props.name
       }
     );
+    this.fs.copyTpl(
+      this.templatePath("docker-compose.test.yml"),
+      this.destinationPath("docker-compose.test.yml"),
+      {
+        appname: this.props.name
+      }
+    );
 
     var dockerfile = this.props.isPhoenix
       ? "Dockerfile.phoenix"
@@ -101,6 +108,13 @@ module.exports = class extends Generator {
         appname: this.props.name,
         phoenixAppname: this.props.phoenixAppname
       }
+    );
+  }
+
+  dotFiles() {
+    this.fs.copyTpl(
+      this.templatePath(".travis.yml"),
+      this.destinationPath(".travis.yml")
     );
   }
 

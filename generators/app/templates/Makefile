@@ -8,17 +8,23 @@ greet:
 yo-regen:
 	yo cloudapp
 
+dev-server:
+	docker-compose -f docker-compose.yml run --service-ports <%= appname %>_dev mix phx.server
+
+dev-db:
+	docker-compose -f docker-compose.yml run <%= appname %>_dev mix ecto.create
+
 test: <%= whichMakeTest %>
 
 default-test:
-	docker-compose run <%= appname %>_tests echo "ok"
-	docker-compose down
+	docker-compose -f docker-compose.test.yml run <%= appname %>_tests echo "ok"
+	docker-compose -f docker-compose.test.yml down
 
 mix-test:
-	docker-compose run <%= appname %>_tests mix do deps.get, deps.compile, compile
-	docker-compose run <%= appname %>_tests mix ecto.create
-	docker-compose run <%= appname %>_tests mix ecto.migrate
-	docker-compose run <%= appname %>_tests mix test
-	docker-compose down
+	docker-compose -f docker-compose.test.yml run <%= appname %>_tests mix do deps.get, deps.compile, compile
+	docker-compose -f docker-compose.test.yml run <%= appname %>_tests mix ecto.create
+	docker-compose -f docker-compose.test.yml run <%= appname %>_tests mix ecto.migrate
+	docker-compose -f docker-compose.test.yml run <%= appname %>_tests mix test
+	docker-compose -f docker-compose.test.yml down
 
 -include Makefile.aws

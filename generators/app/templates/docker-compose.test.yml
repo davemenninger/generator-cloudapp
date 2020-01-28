@@ -1,29 +1,25 @@
 version: '3.4'
 
 networks:
-  <%= appname %>-dev-net:
+  <%= appname %>-tests-net:
     driver: bridge
 
 services:
-  <%= appname %>_dev:
+  <%= appname %>_tests:
     build:
       context: .
       dockerfile: ./Dockerfile
-      target: dev
+      target: test
     depends_on:
       - db
     environment:
-      MIX_ENV: dev
+      MIX_ENV: test
     volumes:
       - type: bind
         source: .
         target: /app
-    ports:
-      - "4000:4000"
-    expose:
-      - "4000"
     networks:
-      - <%= appname %>-dev-net
+      - <%= appname %>-tests-net
   db:
     image: postgres:11.1
     ports:
@@ -33,7 +29,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: <%= appname %>_dev
+      POSTGRES_DB: <%= appname %>_test
     restart: on-failure
     networks:
-      - <%= appname %>-dev-net
+      - <%= appname %>-tests-net

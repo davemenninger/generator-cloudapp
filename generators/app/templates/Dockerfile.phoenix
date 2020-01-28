@@ -19,6 +19,22 @@ FROM base AS test
 
 ENV MIX_ENV=test
 
+FROM base AS dev
+
+ENV MIX_ENV=dev
+
+RUN apk update \
+  && apk upgrade --no-cache \
+  && apk add --no-cache \
+  inotify-tools
+
+RUN mix do deps.get, deps.compile, compile
+
+# Compile Javascript
+RUN cd assets && npm install
+
+CMD [ "mix", "phx.server" ]
+
 FROM base AS builder
 
 ENV MIX_ENV=prod
