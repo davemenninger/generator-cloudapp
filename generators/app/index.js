@@ -56,9 +56,15 @@ module.exports = class extends Generator {
       this.destinationPath("Makefile"),
       {
         appname: this.props.name,
+        whichMakeTest: this.props.isPhoenix ? "mix-test" : "default-test"
+      }
+    );
+    this.fs.copyTpl(
+      this.templatePath("Makefile.aws"),
+      this.destinationPath("Makefile.aws"),
+      {
         pipelineStackname: this.props.name + "-pipeline",
         clusterStackname: this.props.name + "-cluster",
-        whichMakeTest: this.props.isPhoenix ? "mix-test" : "default-test"
       }
     );
   }

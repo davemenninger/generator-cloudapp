@@ -1,19 +1,12 @@
-.PHONY: all greet list-stacks deploy-pipeline delete-pipeline \ 
-	deploy-cluster delete-cluster test default-test mix-test
+.PHONY: all greet test default-test mix-test
 
 all: greet
 
 greet:
 	@ echo "hello, <%= appname %>"
 
-list-stacks:
-	aws cloudformation list-stacks
-
-deploy-pipeline:
-	aws cloudformation deploy --template-file pipeline.yml --stack-name <%= pipelineStackname %> --capabilities CAPABILITY_NAMED_IAM
-
-delete-pipeline:
-	aws cloudformation delete-stack --stack-name <%= pipelineStackname %>
+yo-regen:
+	yo cloudapp
 
 test: <%= whichMakeTest %>
 
@@ -27,3 +20,5 @@ mix-test:
 	docker-compose run <%= appname %>_tests mix ecto.migrate
 	docker-compose run <%= appname %>_tests mix test
 	docker-compose down
+
+-include Makefile.aws
