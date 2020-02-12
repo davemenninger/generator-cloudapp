@@ -1,6 +1,7 @@
-# Overview
+# <%= appname %> [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
+> 
 
-# Yeoman
+## Yeoman
 
 `yo cloudapp` generates or updates your app
 

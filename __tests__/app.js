@@ -16,7 +16,9 @@ describe("generator-cloudapp:app", () => {
       "terraform.tfvars",
       "pipeline.tf",
       "Makefile",
-      ".gitignore"
+      ".gitignore",
+      "README.md",
+      "docker-compose.test.yml"
     ]);
   });
 });

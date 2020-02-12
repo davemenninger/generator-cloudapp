@@ -5,3 +5,7 @@ FROM base AS test
 WORKDIR /app
 
 RUN echo "ok"
+
+FROM base AS runtime
+
+CMD echo "run"

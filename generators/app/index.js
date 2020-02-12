@@ -129,6 +129,13 @@ module.exports = class extends Generator {
 
   dotFiles() {
     this.fs.copyTpl(
+      this.templatePath("README.md"),
+      this.destinationPath("README.md"),
+      {
+        appname: this.props.name
+      }
+    );
+    this.fs.copyTpl(
       this.templatePath(".gitignore"),
       this.destinationPath(".gitignore")
     );

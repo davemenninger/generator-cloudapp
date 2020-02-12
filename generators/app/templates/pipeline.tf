@@ -127,7 +127,7 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName   = "${var.appname}-pipeline"
+        ProjectName   = "${var.appname}-codebuild-build"
         PrimarySource = "Source"
       }
     }
@@ -181,6 +181,27 @@ resource "aws_iam_role_policy" "codebuild_role_policy" {
             "logs:CreateLogStream"
          ],
          "Resource":"arn:aws:logs:${var.region}:*:*"
+    },
+    {
+         "Effect":"Allow",
+         "Action":[
+            "ecr:GetAuthorizationToken"
+         ],
+         "Resource":"*"
+    },
+    {
+         "Effect":"Allow",
+         "Action":[
+            "ecr:GetAuthorizationToken",
+            "ecr:GetDownloadUrlForLayer",
+            "ecr:BatchGetImage",
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:PutImage",
+            "ecr:InitiateLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:CompleteLayerUpload"
+         ],
+         "Resource":"${aws_ecr_repository.ecr_repository.arn}"
     }
   ]
 }
@@ -219,4 +240,49 @@ artifacts:
   files: build.json
 EOF
   }
+}
+
+resource "aws_codebuild_project" "codebuild_build_project" {
+  artifacts = {
+    type = "CODEPIPELINE"
+  }
+
+  environment = {
+    compute_type = "BUILD_GENERAL1_SMALL"
+    type = "LINUX_CONTAINER"
+    image = "aws/codebuild/docker:17.09.0"
+    privileged_mode = true
+    environment_variable {
+      name = "REPOSITORY_URI"
+      value = "${aws_ecr_repository.ecr_repository.repository_url}"
+    }
+  }
+
+  name = "${var.appname}-codebuild-build"
+  service_role = "${aws_iam_role.codebuild_role.id}"
+  source = {
+    type = "CODEPIPELINE"
+    buildspec = <<EOF
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email)
+      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - IMAGE_URI="$${REPOSITORY_URI}:$${TAG}"
+  build:
+    commands:
+      - docker build --tag "$${IMAGE_URI}" . --target runtime
+  post_build:
+    commands:
+      - docker push "$IMAGE_URI"
+      - printf '{"ImageUri":"%s"}' "$IMAGE_URI" > build.json
+artifacts:
+  files: build.json
+EOF
+  }
+}
+
+resource "aws_ecr_repository" "ecr_repository" {
+  name = "${var.appname}"
 }
