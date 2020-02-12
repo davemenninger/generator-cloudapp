@@ -1,0 +1,7 @@
+.PHONY: cloud-init plan
+
+cloud-init:
+	terraform init
+
+plan:
+	terraform plan

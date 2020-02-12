@@ -37,10 +37,16 @@ module.exports = class extends Generator {
         store: true
       },
       {
+        type: "input",
+        name: "githubOAuthToken",
+        message: "Your github oauth token",
+        store: true // TODO don't store this
+      },
+      {
         type: "confirm",
         name: "isPhoenix",
         message: "Would you like to generate a phoenix app?",
-        default: true
+        default: false
       }
     ];
 
@@ -67,17 +73,27 @@ module.exports = class extends Generator {
         clusterStackname: this.props.name + "-cluster"
       }
     );
+    this.fs.copyTpl(
+      this.templatePath("Makefile.terraform"),
+      this.destinationPath("Makefile.terraform")
+    );
   }
 
   cloudTemplates() {
     this.fs.copyTpl(
-      this.templatePath("pipeline.yml"),
-      this.destinationPath("pipeline.yml"),
+      this.templatePath("terraform.tfvars"),
+      this.destinationPath("terraform.tfvars"),
       {
         appname: this.props.name,
         githubUser: this.props.githubUser,
-        githubRepository: this.props.githubRepository
+        githubRepository: this.props.githubRepository,
+        githubOAuthToken: this.props.githubOAuthToken,
+        region: "us-east-2"
       }
+    );
+    this.fs.copyTpl(
+      this.templatePath("pipeline.tf"),
+      this.destinationPath("pipeline.tf")
     );
   }
 
@@ -112,6 +128,10 @@ module.exports = class extends Generator {
   }
 
   dotFiles() {
+    this.fs.copyTpl(
+      this.templatePath(".gitignore"),
+      this.destinationPath(".gitignore")
+    );
     this.fs.copyTpl(
       this.templatePath(".travis.yml"),
       this.destinationPath(".travis.yml")

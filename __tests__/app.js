@@ -11,6 +11,12 @@ describe("generator-cloudapp:app", () => {
   });
 
   it("creates files", () => {
-    assert.file(["Dockerfile", "pipeline.yml", "Makefile"]);
+    assert.file([
+      "Dockerfile",
+      "terraform.tfvars",
+      "pipeline.tf",
+      "Makefile",
+      ".gitignore"
+    ]);
   });
 });

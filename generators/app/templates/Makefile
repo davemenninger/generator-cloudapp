@@ -27,4 +27,4 @@ mix-test:
 	docker-compose -f docker-compose.test.yml run <%= appname %>_tests mix test
 	docker-compose -f docker-compose.test.yml down
 
--include Makefile.aws
+-include Makefile.terraform

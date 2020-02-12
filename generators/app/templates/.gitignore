@@ -1,0 +1,6 @@
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# TODO fi this so that the oauth token is not in this file
+terraform.tfvars
