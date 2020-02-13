@@ -92,8 +92,8 @@ module.exports = class extends Generator {
       }
     );
     this.fs.copyTpl(
-      this.templatePath("pipeline.tf"),
-      this.destinationPath("pipeline.tf")
+      this.templatePath("main.tf"),
+      this.destinationPath("main.tf")
     );
   }
 

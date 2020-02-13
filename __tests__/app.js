@@ -14,7 +14,7 @@ describe("generator-cloudapp:app", () => {
     assert.file([
       "Dockerfile",
       "terraform.tfvars",
-      "pipeline.tf",
+      "main.tf",
       "Makefile",
       ".gitignore",
       "README.md",
