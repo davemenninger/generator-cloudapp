@@ -50,3 +50,5 @@ patch:
         patched: '2020-11-26T15:22:23.487Z'
     - snyk > snyk-python-plugin > snyk-poetry-lockfile-parser > @snyk/cli-interface > @snyk/dep-graph > graphlib > lodash:
         patched: '2020-11-26T15:22:23.487Z'
+    - yeoman-generator > grouped-queue > lodash:
+        patched: '2021-02-10T20:47:34.888Z'
