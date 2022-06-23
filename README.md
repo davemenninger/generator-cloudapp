@@ -1,4 +1,4 @@
-# generator-cloudapp [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
+# generator-cloudapp [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url][![Node.js CI](https://github.com/davemenninger/generator-cloudapp/actions/workflows/node.js.yml/badge.svg)](https://github.com/davemenninger/generator-cloudapp/actions/workflows/node.js.yml)
 > 
 
 ## Installation
