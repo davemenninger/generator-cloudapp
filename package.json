@@ -73,7 +73,7 @@
     ]
   },
   "scripts": {
-    "pretest": "eslint .",
+    "pretest": "./node_modules/.bin/eslint ./",
     "test": "jest",
     "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect"
