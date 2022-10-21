@@ -28,13 +28,13 @@
     "prettier": "^1.19.1",
     "snyk": "^1.996.0",
     "yeoman-assert": "^3.1.0",
-    "yeoman-test": "^1.7.0"
+    "yeoman-test": "^6.3.0"
   },
   "engines": {
     "npm": ">= 4.0.0"
   },
   "dependencies": {
-    "yeoman-generator": "^4.13.0",
+    "yeoman-generator": "^5.7.0",
     "chalk": "^2.1.0",
     "yosay": "^2.0.1"
   },
